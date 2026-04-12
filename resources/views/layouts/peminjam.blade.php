@@ -343,7 +343,7 @@
             <li class="sidebar-section">Riwayat</li>
             
             <li class="sidebar-menu-item">
-                <a href="/peminjam/riwayat" class="sidebar-menu-link {{ request()->is('peminjam/riwayat') ? 'active' : '' }}">
+                <a href="{{ route('peminjam.profile') }}" class="sidebar-menu-link {{ request()->is('peminjam/profile') ? 'active' : '' }}">
                     <i class="bi bi-clock-history sidebar-menu-icon"></i>
                     Riwayat Peminjaman
                 </a>

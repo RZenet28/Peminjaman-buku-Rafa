@@ -50,7 +50,7 @@ class Peminjaman extends Model
      */
     public function buku()
     {
-        return $this->belongsTo(Buku::class, 'buku_id');
+        return $this->belongsTo(Book::class, 'buku_id');
     }
     
     /**

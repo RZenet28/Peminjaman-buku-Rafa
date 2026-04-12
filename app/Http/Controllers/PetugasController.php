@@ -18,6 +18,9 @@ class PetugasController extends Controller
         // Total buku
         $totalBuku = Buku::count();
         
+        // Pending applications
+        $peminjamanPending = Peminjaman::where('status', 'pending')->count();
+        
         // Buku yang sedang dipinjam
         $bukuDipinjam = Peminjaman::where('status', 'dipinjam')->count();
         
@@ -52,11 +55,62 @@ class PetugasController extends Controller
         
         return view('petugas.dashboard', compact(
             'totalBuku',
+            'peminjamanPending',
             'bukuDipinjam',
             'bukuTerlambat',
             'totalAnggota',
             'peminjamanTerbaru',
             'bukuPopuler'
         ));
+    }
+
+    /**
+     * Display pending loan applications for approval
+     */
+    public function persetujuanPeminjaman()
+    {
+        $loans = Peminjaman::with(['user', 'buku'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'asc')
+            ->paginate(10);
+
+        return view('petugas.persetujuan_peminjaman', compact('loans'));
+    }
+
+    /**
+     * Approve a loan application
+     */
+    public function approvePeminjaman($id)
+    {
+        $loan = Peminjaman::findOrFail($id);
+        
+        // Get the book
+        $book = $loan->buku;
+        
+        // Check if stock is available
+        if (!$book || $book->stock < 1) {
+            return redirect()->route('petugas.persetujuan')->with('error', 'Stok buku tidak tersedia!');
+        }
+        
+        // Reduce stock
+        $book->decrement('stock');
+        
+        // Update status to approved
+        $loan->update(['status' => 'dipinjam']);
+
+        return redirect()->route('petugas.persetujuan')->with('success', 'Peminjaman telah disetujui! Stok berkurang 1.');
+    }
+
+    /**
+     * Reject a loan application
+     */
+    public function rejectPeminjaman($id)
+    {
+        $loan = Peminjaman::findOrFail($id);
+        
+        // Update status to rejected
+        $loan->update(['status' => 'ditolak']);
+
+        return redirect()->route('petugas.persetujuan')->with('success', 'Peminjaman telah ditolak!');
     }
 }

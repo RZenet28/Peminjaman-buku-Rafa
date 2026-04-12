@@ -48,7 +48,12 @@ class User extends Authenticatable
     }
 
     public function siswa()
-{
-    return $this->hasOne(Siswa::class);
-}
+    {
+        return $this->hasOne(Siswa::class);
+    }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class, 'user_id');
+    }
 }

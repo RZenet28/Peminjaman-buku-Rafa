@@ -356,34 +356,34 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="/admin/peminjaman" class="sidebar-menu-link">
+                <a href="{{ route('admin.borrowing.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-journal-text sidebar-menu-icon"></i>
-                    Peminjaman
+                    Kelola Peminjaman
                 </a>
             </li>
 
             <li class="sidebar-section">Laporan</li>
 
             <li class="sidebar-menu-item">
-                <a href="/admin/laporan" class="sidebar-menu-link">
+                <a href="{{ route('admin.reporting.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-bar-chart sidebar-menu-icon"></i>
-                    Laporan
+                    Laporan Peminjaman
                 </a>
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="/admin/riwayat" class="sidebar-menu-link">
+                <a href="{{ route('admin.history.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-clock-history sidebar-menu-icon"></i>
-                    Riwayat
+                    Riwayat Peminjaman
                 </a>
             </li>
 
             <li class="sidebar-section">Pengaturan</li>
 
             <li class="sidebar-menu-item">
-                <a href="/admin/settings" class="sidebar-menu-link">
+                <a href="{{ route('admin.settings.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-gear sidebar-menu-icon"></i>
-                    Pengaturan
+                    Pengaturan Sistem
                 </a>
             </li>
         </ul>

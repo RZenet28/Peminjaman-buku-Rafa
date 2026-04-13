@@ -87,6 +87,28 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::get('/persetujuan-peminjaman', [PetugasController::class, 'persetujuanPeminjaman'])->name('persetujuan');
     Route::post('/peminjaman/{id}/approve', [PetugasController::class, 'approvePeminjaman'])->name('approve');
     Route::post('/peminjaman/{id}/reject', [PetugasController::class, 'rejectPeminjaman'])->name('reject');
+    
+    // Monitor returns
+    Route::get('/monitor-returns', [PetugasController::class, 'monitorReturns'])->name('monitor_returns');
+    Route::post('/record-return/{id}', [PetugasController::class, 'recordReturn'])->name('record_return');
+    
+    // Books management
+    Route::get('/books', [PetugasController::class, 'books'])->name('books.index');
+    Route::get('/books/{id}', [PetugasController::class, 'bookDetail'])->name('books.detail');
+    
+    // Borrowers management
+    Route::get('/borrowers', [PetugasController::class, 'borrowers'])->name('borrowers.index');
+    Route::get('/borrowers/{id}', [PetugasController::class, 'borrowerDetail'])->name('borrowers.detail');
+    
+    // Reporting
+    Route::get('/reporting', [PetugasController::class, 'reporting'])->name('reporting');
+    Route::post('/export-report', [PetugasController::class, 'exportReport'])->name('export_report');
+    
+    // Profile management
+    Route::get('/profile', [PetugasController::class, 'profile'])->name('profile');
+    Route::post('/profile', [PetugasController::class, 'updateProfile'])->name('update_profile');
+    Route::get('/change-password', [PetugasController::class, 'showChangePassword'])->name('change_password');
+    Route::post('/change-password', [PetugasController::class, 'changePassword'])->name('update_password');
 });
 
 // =====================

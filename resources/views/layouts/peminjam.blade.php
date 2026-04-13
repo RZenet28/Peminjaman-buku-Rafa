@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - BookHub Sekolah</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
+
     <style>
         * {
             margin: 0;
@@ -31,15 +32,15 @@
             width: 260px;
             background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
             padding: 0;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: all 0.3s ease;
         }
 
         .sidebar-header {
             padding: 24px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .sidebar-logo {
@@ -52,7 +53,7 @@
         .sidebar-logo-icon {
             width: 40px;
             height: 40px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -77,7 +78,7 @@
 
         .sidebar-section {
             padding: 8px 20px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
@@ -93,7 +94,7 @@
             display: flex;
             align-items: center;
             padding: 12px 16px;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -103,13 +104,13 @@
         }
 
         .sidebar-menu-link:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             transform: translateX(4px);
         }
 
         .sidebar-menu-link.active {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             color: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
@@ -140,8 +141,8 @@
             left: 0;
             right: 0;
             padding: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .user-info {
@@ -149,7 +150,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             color: white;
             backdrop-filter: blur(10px);
@@ -166,7 +167,7 @@
             font-weight: 600;
             font-size: 16px;
             flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .user-details {
@@ -186,7 +187,7 @@
 
         .user-role {
             font-size: 12px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin: 0;
         }
 
@@ -205,7 +206,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 999;
@@ -282,7 +283,7 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0,0,0,0.5);
+                background: rgba(0, 0, 0, 0.5);
                 z-index: 999;
             }
 
@@ -292,6 +293,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar PEMINJAM -->
@@ -309,50 +311,56 @@
         <!-- Sidebar Menu PEMINJAM -->
         <ul class="sidebar-menu">
             <li class="sidebar-section">Menu Utama</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/peminjam/dashboard" class="sidebar-menu-link {{ request()->is('peminjam/dashboard') ? 'active' : '' }}">
+                <a href="/peminjam/dashboard"
+                    class="sidebar-menu-link {{ request()->is('peminjam/dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 sidebar-menu-icon"></i>
                     Dashboard
                 </a>
             </li>
 
             <li class="sidebar-section">Peminjaman</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/peminjam/daftar-buku" class="sidebar-menu-link {{ request()->is('peminjam/daftar-buku') ? 'active' : '' }}">
+                <a href="/peminjam/daftar-buku"
+                    class="sidebar-menu-link {{ request()->is('peminjam/daftar-buku') ? 'active' : '' }}">
                     <i class="bi bi-book sidebar-menu-icon"></i>
                     Daftar Buku
                 </a>
             </li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/peminjam/ajukan-peminjaman" class="sidebar-menu-link {{ request()->is('peminjam/ajukan-peminjaman') ? 'active' : '' }}">
+                <a href="/peminjam/ajukan-peminjaman"
+                    class="sidebar-menu-link {{ request()->is('peminjam/ajukan-peminjaman') ? 'active' : '' }}">
                     <i class="bi bi-plus-circle sidebar-menu-icon"></i>
                     Ajukan Peminjaman
                 </a>
             </li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/peminjam/kembalikan-buku" class="sidebar-menu-link {{ request()->is('peminjam/kembalikan-buku') ? 'active' : '' }}">
+                <a href="/peminjam/kembalikan-buku"
+                    class="sidebar-menu-link {{ request()->is('peminjam/kembalikan-buku') ? 'active' : '' }}">
                     <i class="bi bi-arrow-return-left sidebar-menu-icon"></i>
                     Kembalikan Buku
                 </a>
             </li>
 
             <li class="sidebar-section">Riwayat</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="{{ route('peminjam.profile') }}" class="sidebar-menu-link {{ request()->is('peminjam/profile') ? 'active' : '' }}">
+                <a href="{{ route('peminjam.profile') }}"
+                    class="sidebar-menu-link {{ request()->is('peminjam/profile') ? 'active' : '' }}">
                     <i class="bi bi-clock-history sidebar-menu-icon"></i>
                     Riwayat Peminjaman
                 </a>
             </li>
 
             <li class="sidebar-section">Akun</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="{{ route('peminjam.profile.siswa') }}" class="sidebar-menu-link {{ request()->is('peminjam/profile-siswa') ? 'active' : '' }}">
+                <a href="{{ route('peminjam.profile.siswa') }}"
+                    class="sidebar-menu-link {{ request()->is('peminjam/profile-siswa') ? 'active' : '' }}">
                     <i class="bi bi-person-circle sidebar-menu-icon"></i>
                     Profil Saya
                 </a>
@@ -384,7 +392,8 @@
                 <button class="menu-toggle" id="menuToggle">
                     <i class="bi bi-list"></i>
                 </button>
-                <h5 class="mb-0 fw-bold text-dark">{{ Auth::user()->name }} ({{ Auth::user()->kelas ?? 'Peminjam' }})</h5>
+                <h5 class="mb-0 fw-bold text-dark">{{ Auth::user()->name }} ({{ Auth::user()->kelas ?? 'Peminjam' }})
+                </h5>
             </div>
             <div class="top-nav-right">
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -405,7 +414,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JS -->
     <script>
         // Mobile Menu Toggle
@@ -413,15 +422,15 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
 
-        if(menuToggle) {
-            menuToggle.addEventListener('click', function() {
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function () {
                 sidebar.classList.toggle('active');
                 overlay.classList.toggle('active');
             });
         }
 
-        if(overlay) {
-            overlay.addEventListener('click', function() {
+        if (overlay) {
+            overlay.addEventListener('click', function () {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
             });
@@ -430,4 +439,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

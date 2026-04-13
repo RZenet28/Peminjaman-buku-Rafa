@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - BookHub Sekolah</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
+
     <style>
         * {
             margin: 0;
@@ -31,15 +32,15 @@
             width: 260px;
             background: linear-gradient(180deg, #10b981 0%, #059669 100%);
             padding: 0;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: all 0.3s ease;
         }
 
         .sidebar-header {
             padding: 24px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .sidebar-logo {
@@ -52,7 +53,7 @@
         .sidebar-logo-icon {
             width: 40px;
             height: 40px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -77,7 +78,7 @@
 
         .sidebar-section {
             padding: 8px 20px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
@@ -93,7 +94,7 @@
             display: flex;
             align-items: center;
             padding: 12px 16px;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -103,13 +104,13 @@
         }
 
         .sidebar-menu-link:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             transform: translateX(4px);
         }
 
         .sidebar-menu-link.active {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             color: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
@@ -140,8 +141,8 @@
             left: 0;
             right: 0;
             padding: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .user-info {
@@ -149,7 +150,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             color: white;
             backdrop-filter: blur(10px);
@@ -166,7 +167,7 @@
             font-weight: 600;
             font-size: 16px;
             flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .user-details {
@@ -186,7 +187,7 @@
 
         .user-role {
             font-size: 12px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin: 0;
         }
 
@@ -205,7 +206,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 999;
@@ -282,7 +283,7 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0,0,0,0.5);
+                background: rgba(0, 0, 0, 0.5);
                 z-index: 999;
             }
 
@@ -292,6 +293,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar PETUGAS -->
@@ -309,57 +311,64 @@
         <!-- Sidebar Menu PETUGAS -->
         <ul class="sidebar-menu">
             <li class="sidebar-section">Menu Utama</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/dashboard" class="sidebar-menu-link {{ request()->is('petugas/dashboard') ? 'active' : '' }}">
+                <a href="/petugas/dashboard"
+                    class="sidebar-menu-link {{ request()->is('petugas/dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 sidebar-menu-icon"></i>
                     Dashboard
                 </a>
             </li>
 
             <li class="sidebar-section">Tugas Petugas</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/persetujuan-peminjaman" class="sidebar-menu-link {{ request()->is('petugas/persetujuan-peminjaman') ? 'active' : '' }}">
+                <a href="{{ route('petugas.persetujuan') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/persetujuan-peminjaman') ? 'active' : '' }}">
                     <i class="bi bi-clipboard-check sidebar-menu-icon"></i>
                     Menyetujui Peminjaman
                 </a>
             </li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/pantau-pengembalian" class="sidebar-menu-link {{ request()->is('petugas/pantau-pengembalian') ? 'active' : '' }}">
+                <a href="{{ route('petugas.monitor_returns') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/monitor-returns') ? 'active' : '' }}">
                     <i class="bi bi-eye sidebar-menu-icon"></i>
                     Memantau Pengembalian
                 </a>
             </li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/cetak-laporan" class="sidebar-menu-link {{ request()->is('petugas/cetak-laporan') ? 'active' : '' }}">
+                <a href="{{ route('petugas.reporting') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/reporting') ? 'active' : '' }}">
                     <i class="bi bi-printer sidebar-menu-icon"></i>
-                    Mencetak Laporan
+                    Laporan Peminjaman
                 </a>
             </li>
 
             <li class="sidebar-section">Data</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/data-buku" class="sidebar-menu-link {{ request()->is('petugas/data-buku') ? 'active' : '' }}">
+                <a href="{{ route('petugas.books.index') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/books*') ? 'active' : '' }}">
                     <i class="bi bi-book-half sidebar-menu-icon"></i>
                     Data Buku
                 </a>
             </li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/petugas/data-peminjam" class="sidebar-menu-link {{ request()->is('petugas/data-peminjam') ? 'active' : '' }}">
+                <a href="{{ route('petugas.borrowers.index') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/borrowers*') ? 'active' : '' }}">
                     <i class="bi bi-people sidebar-menu-icon"></i>
                     Data Peminjam
                 </a>
             </li>
 
             <li class="sidebar-section">Akun</li>
-            
+
             <li class="sidebar-menu-item">
-                <a href="/profile" class="sidebar-menu-link {{ request()->is('profile') ? 'active' : '' }}">
+                <a href="{{ route('petugas.profile') }}"
+                    class="sidebar-menu-link {{ request()->is('petugas/profile') ? 'active' : '' }}">
                     <i class="bi bi-person-circle sidebar-menu-icon"></i>
                     Profil Saya
                 </a>
@@ -412,7 +421,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JS -->
     <script>
         // Mobile Menu Toggle
@@ -420,15 +429,15 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
 
-        if(menuToggle) {
-            menuToggle.addEventListener('click', function() {
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function () {
                 sidebar.classList.toggle('active');
                 overlay.classList.toggle('active');
             });
         }
 
-        if(overlay) {
-            overlay.addEventListener('click', function() {
+        if (overlay) {
+            overlay.addEventListener('click', function () {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
             });
@@ -437,4 +446,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

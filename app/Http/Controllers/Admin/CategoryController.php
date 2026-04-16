@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
 {
-    $query = Category::withCount('books');
+    $query = Category::withCount('books')->withSum('books', 'stock');
 
     if ($request->search) {
         $query->where('name', 'like', '%' . $request->search . '%');

@@ -1,123 +1,243 @@
 @extends('layouts.petugas')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="mb-8">
-        <a href="{{ route('petugas.books.index') }}" class="text-green-500 hover:text-green-600 mb-2 inline-block">&larr; Kembali ke Daftar Buku</a>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ $book->nama_buku }}</h1>
-        <p class="text-gray-600">Detail dan riwayat peminjaman buku</p>
-    </div>
+<style>
+    :root {
+        --primary: #10b981;
+        --secondary: #3b82f6;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --bg-page: #f8fafc;
+        --white: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+    }
 
-    <!-- Book Details -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Book Info Card -->
-        <div class="md:col-span-2 bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Informasi Buku</h2>
-            <div class="space-y-3">
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">Judul:</span>
-                    <span class="text-gray-600">{{ $book->nama_buku }}</span>
+    .detail-wrapper {
+        font-family: 'Inter', sans-serif;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        color: var(--text-main);
+    }
+
+    /* Header & Navigation */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        transition: transform 0.2s;
+    }
+    .back-link:hover { transform: translateX(-5px); }
+
+    .page-title { font-size: 2.25rem; font-weight: 800; margin: 0; color: #0f172a; }
+    .page-subtitle { color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 2.5rem; }
+
+    /* Grid Layout */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    @media (max-width: 768px) {
+        .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .glass-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #334155;
+    }
+
+    /* Info List */
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .info-item:last-child { border-bottom: none; }
+    .label { font-weight: 600; color: var(--text-muted); }
+    .value { font-weight: 700; color: var(--text-main); text-align: right; }
+
+    /* Stock Boxes */
+    .stock-box {
+        padding: 1.25rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .sb-total { background: #f1f5f9; }
+    .sb-available { background: #ecfdf5; color: #065f46; border: 1px solid #d1fae5; }
+    .sb-borrowed { background: #fff7ed; color: #9a3412; border: 1px solid #ffedd5; }
+
+    .sb-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+    .sb-value { font-size: 1.75rem; font-weight: 800; margin-top: 0.25rem; }
+
+    /* Table Design */
+    .table-container { 
+        background: var(--white); 
+        border: 1px solid var(--border); 
+        border-radius: 20px; 
+        overflow: hidden; 
+    }
+    .table-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: #f8fafc; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 1rem 2rem; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; text-align: left; }
+    td { padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+
+    /* Status Badges */
+    .badge {
+        padding: 0.35rem 0.85rem;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    .bg-pending { background: #fef3c7; color: #92400e; }
+    .bg-dipinjam { background: #dbeafe; color: #1e40af; }
+    .bg-dikembalikan { background: #d1fae5; color: #065f46; }
+    .bg-ditolak { background: #fee2e2; color: #991b1b; }
+</style>
+
+<div class="detail-wrapper">
+    <a href="{{ route('petugas.books.index') }}" class="back-link">
+        &larr; Kembali ke Daftar Buku
+    </a>
+    
+    <h1 class="page-title">{{ $book->nama_buku }}</h1>
+    <p class="page-subtitle">Detail spesifikasi buku dan riwayat aktivitas peminjaman.</p>
+
+    <div class="detail-grid">
+        <div class="glass-card">
+            <h2 class="card-title">📖 Informasi Buku</h2>
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="label">Nama Pengarang</span>
+                    <span class="value">{{ $book->pengarang ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">Pengarang:</span>
-                    <span class="text-gray-600">{{ $book->pengarang ?? '-' }}</span>
+                <div class="info-item">
+                    <span class="label">Penerbit</span>
+                    <span class="value">{{ $book->penerbit ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">Penerbit:</span>
-                    <span class="text-gray-600">{{ $book->penerbit ?? '-' }}</span>
+                <div class="info-item">
+                    <span class="label">Tahun Terbit</span>
+                    <span class="value">{{ $book->tahun ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">Tahun Terbit:</span>
-                    <span class="text-gray-600">{{ $book->tahun ?? '-' }}</span>
+                <div class="info-item">
+                    <span class="label">Nomor ISBN</span>
+                    <span class="value"><code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">{{ $book->isbn ?? '-' }}</code></span>
                 </div>
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">ISBN:</span>
-                    <span class="text-gray-600">{{ $book->isbn ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium text-gray-700">Kategori:</span>
-                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">{{ $book->category->name ?? '-' }}</span>
+                <div class="info-item">
+                    <span class="label">Kategori</span>
+                    <span class="value">
+                        <span class="badge" style="background: #eff6ff; color: #2563eb;">{{ $book->category->name ?? '-' }}</span>
+                    </span>
                 </div>
                 @if ($book->deskripsi)
-                    <div class="border-b pb-2">
-                        <span class="font-medium text-gray-700">Deskripsi:</span>
-                        <p class="text-gray-600 mt-2">{{ $book->deskripsi }}</p>
-                    </div>
+                <div style="margin-top: 1.5rem;">
+                    <span class="label">Deskripsi</span>
+                    <p style="margin-top: 0.75rem; line-height: 1.6; color: var(--text-main); font-size: 0.95rem;">
+                        {{ $book->deskripsi }}
+                    </p>
+                </div>
                 @endif
             </div>
         </div>
 
-        <!-- Stock Info Card -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Informasi Stok</h2>
-            <div class="space-y-4">
-                <div class="bg-gray-100 rounded-lg p-4 text-center">
-                    <p class="text-gray-600 text-sm">Total Stok</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ $book->stock ?? 0 }}</p>
-                </div>
-                <div class="bg-green-100 rounded-lg p-4 text-center">
-                    <p class="text-gray-600 text-sm">Stok Tersedia</p>
-                    <p class="text-3xl font-bold text-green-600">{{ $book->stock ?? 0 }}</p>
-                </div>
-                <div class="bg-orange-100 rounded-lg p-4 text-center">
-                    <p class="text-gray-600 text-sm">Sedang Dipinjam</p>
-                    <p class="text-3xl font-bold text-orange-600">0</p>
-                </div>
+        <div class="glass-card">
+            <h2 class="card-title">📊 Status Stok</h2>
+            <div class="stock-box sb-total">
+                <div class="sb-label">Total Inventaris</div>
+                <div class="sb-value">{{ $book->stock ?? 0 }}</div>
+            </div>
+            <div class="stock-box sb-available">
+                <div class="sb-label">Stok Tersedia</div>
+                <div class="sb-value">{{ $book->stock ?? 0 }}</div>
+            </div>
+            <div class="stock-box sb-borrowed">
+                <div class="sb-label">Sedang Dipinjam</div>
+                <div class="sb-value">0</div>
             </div>
         </div>
     </div>
 
-    <!-- Borrowing History -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b bg-gray-100">
-            <h2 class="text-xl font-bold text-gray-800">Riwayat Peminjaman</h2>
+    <div class="table-container">
+        <div class="table-header">
+            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700;">🕒 Riwayat Peminjaman</h2>
         </div>
-
-        @if ($borrowingHistory->count() > 0)
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Peminjam</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Peminjaman</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Kembali</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Tanggal Pengembalian</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($borrowingHistory as $record)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-6 py-4 text-sm">{{ $record->user->name }}</td>
-                            <td class="px-6 py-4 text-sm">{{ $record->created_at->format('d-m-Y H:i') }}</td>
-                            <td class="px-6 py-4 text-sm">{{ $record->tanggal_kembali->format('d-m-Y') }}</td>
-                            <td class="px-6 py-4 text-sm">
-                                @if ($record->status == 'pending')
-                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">Menunggu</span>
-                                @elseif ($record->status == 'dipinjam')
-                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">Dipinjam</span>
-                                @elseif ($record->status == 'dikembalikan')
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Dikembalikan</span>
-                                @else
-                                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Ditolak</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-sm">
-                                {{ $record->tanggal_pengembalian ? $record->tanggal_pengembalian->format('d-m-Y H:i') : '-' }}
-                            </td>
+        
+        <div style="overflow-x: auto;">
+            @if ($borrowingHistory->count() > 0)
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Peminjam</th>
+                            <th>Waktu Pinjam</th>
+                            <th>Batas Kembali</th>
+                            <th>Status</th>
+                            <th>Waktu Kembali</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($borrowingHistory as $record)
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 700;">{{ $record->user->name }}</div>
+                                </td>
+                                <td>{{ $record->created_at->format('d/m/Y H:i') }}</td>
+                                <td>{{ $record->tanggal_kembali->format('d/m/Y') }}</td>
+                                <td>
+                                    @php
+                                        $statusClass = 'bg-' . $record->status;
+                                        $statusLabel = [
+                                            'pending' => 'Menunggu',
+                                            'dipinjam' => 'Dipinjam',
+                                            'dikembalikan' => 'Kembali',
+                                            'ditolak' => 'Ditolak'
+                                        ][$record->status] ?? $record->status;
+                                    @endphp
+                                    <span class="badge {{ $statusClass }}">{{ $statusLabel }}</span>
+                                </td>
+                                <td>
+                                    <span style="color: var(--text-muted);">
+                                        {{ $record->tanggal_pengembalian ? $record->tanggal_pengembalian->format('d/m/Y H:i') : '-' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t">
-                {{ $borrowingHistory->links() }}
-            </div>
-        @else
-            <div class="px-6 py-8 text-center text-gray-500">
-                <p class="text-lg">Belum ada riwayat peminjaman</p>
-            </div>
-        @endif
+                <div style="padding: 1.5rem 2rem; background: #f8fafc; border-top: 1px solid var(--border);">
+                    {{ $borrowingHistory->links() }}
+                </div>
+            @else
+                <div style="padding: 4rem; text-align: center; color: var(--text-muted);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                    <p>Belum ada riwayat peminjaman untuk buku ini.</p>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 @endsection

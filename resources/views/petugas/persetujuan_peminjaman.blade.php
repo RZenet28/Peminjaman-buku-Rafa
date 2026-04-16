@@ -252,11 +252,11 @@
                         <div class="loan-details">
                             <div class="detail-item">
                                 <span class="detail-label">Judul Buku</span>
-                                <span class="detail-value book-title">{{ $loan->buku->judul ?? 'N/A' }}</span>
+                                <span class="detail-value book-title">{{ $loan->buku->nama_buku ?? 'N/A' }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Pengajuan Tanggal</span>
-                                <span class="detail-value">{{ $loan->created_at->format('d M Y H:i') }}</span>
+                                <span class="detail-value">{{ $loan->created_at->format('d M Y') }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Tanggal Mulai Pinjam</span>

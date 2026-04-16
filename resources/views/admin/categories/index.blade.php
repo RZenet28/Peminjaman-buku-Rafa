@@ -97,7 +97,7 @@
                         <div class="text-center mb-3">
                             <span class="badge bg-light text-dark border">
                                 <i class="bi bi-book me-1"></i>
-                                {{ $category->books_count ?? 0 }} Buku
+                                {{ $category->books_count ?? 0 }} Buku (Stock: {{ $category->books_sum_stock ?? 0 }})
                             </span>
                         </div>
 

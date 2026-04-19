@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Peminjaman::class, 'user_id');
     }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
 }

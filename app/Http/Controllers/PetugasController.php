@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Peminjaman;
+use App\Models\Pengajuan;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -71,53 +72,66 @@ class PetugasController extends Controller
     }
 
     /**
-     * Display pending loan applications for approval
+     * Display pending loan applications for approval (grouped by request)
      */
     public function persetujuanPeminjaman()
     {
-        $loans = Peminjaman::with(['user', 'buku'])
+        $requests = Pengajuan::with(['user', 'peminjamans.buku'])
             ->where('status', 'pending')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('petugas.persetujuan_peminjaman', compact('loans'));
+        return view('petugas.persetujuan_peminjaman', compact('requests'));
     }
 
     /**
-     * Approve a loan application
+     * Approve a grouped loan request
      */
     public function approvePeminjaman($id)
     {
-        $loan = Peminjaman::findOrFail($id);
+        $pengajuan = Pengajuan::with('peminjamans.buku')->findOrFail($id);
         
-        // Get the book
-        $book = $loan->buku;
-        
-        // Check if stock is available
-        if (!$book || $book->stock < 1) {
-            return redirect()->route('petugas.persetujuan')->with('error', 'Stok buku tidak tersedia!');
+        // Check stock availability for all books in this request
+        foreach ($pengajuan->peminjamans as $peminjaman) {
+            if (!$peminjaman->buku || $peminjaman->buku->stock < 1) {
+                return redirect()->route('petugas.persetujuan')
+                    ->with('error', 'Stok untuk buku "' . ($peminjaman->buku->nama_buku ?? 'N/A') . '" tidak tersedia!');
+            }
         }
         
-        // Reduce stock
-        $book->decrement('stock');
+        // Approve all peminjaman and decrement stock
+        foreach ($pengajuan->peminjamans as $peminjaman) {
+            // Reduce stock
+            $peminjaman->buku->decrement('stock');
+            
+            // Update status to approved
+            $peminjaman->update(['status' => 'dipinjam']);
+        }
         
-        // Update status to approved
-        $loan->update(['status' => 'dipinjam']);
+        // Update pengajuan status to approved
+        $pengajuan->update(['status' => 'disetujui']);
 
-        return redirect()->route('petugas.persetujuan')->with('success', 'Peminjaman telah disetujui! Stok berkurang 1.');
+        return redirect()->route('petugas.persetujuan')
+            ->with('success', 'Permohonan peminjaman berhasil disetujui! ' . $pengajuan->peminjamans->count() . ' buku siap dipinjam.');
     }
 
     /**
-     * Reject a loan application
+     * Reject a grouped loan request
      */
     public function rejectPeminjaman($id)
     {
-        $loan = Peminjaman::findOrFail($id);
+        $pengajuan = Pengajuan::with('peminjamans')->findOrFail($id);
         
-        // Update status to rejected
-        $loan->update(['status' => 'ditolak']);
+        // Reject all peminjaman
+        foreach ($pengajuan->peminjamans as $peminjaman) {
+            $peminjaman->update(['status' => 'ditolak']);
+        }
+        
+        // Update pengajuan status to rejected
+        $pengajuan->update(['status' => 'ditolak']);
 
-        return redirect()->route('petugas.persetujuan')->with('success', 'Peminjaman telah ditolak!');
+        return redirect()->route('petugas.persetujuan')
+            ->with('success', 'Permohonan peminjaman telah ditolak!');
     }
 
     /**

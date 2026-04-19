@@ -234,6 +234,44 @@
             gap: 16px;
         }
 
+        .cart-icon-top {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f3f4f6;
+            color: #667eea;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cart-icon-top:hover {
+            background: #e5e7eb;
+            transform: scale(1.05);
+        }
+
+        .cart-badge-top {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            border: 2px solid white;
+        }
+
         .logout-btn {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
@@ -396,6 +434,10 @@
                 </h5>
             </div>
             <div class="top-nav-right">
+                <a href="{{ route('peminjam.cart.index') }}" class="cart-icon-top" title="Keranjang Peminjaman">
+                    <i class="bi bi-bag-fill"></i>
+                    <span class="cart-badge-top" id="cartBadgeTop">0</span>
+                </a>
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
                     <button type="submit" class="logout-btn">
@@ -435,6 +477,22 @@
                 overlay.classList.remove('active');
             });
         }
+
+        // Update cart badge
+        function updateCartBadge() {
+            fetch('{{ route("peminjam.cart.mini") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cartBadgeTop');
+                    if (badge) {
+                        badge.textContent = data.count;
+                    }
+                })
+                .catch(error => console.log('Cart badge update skipped'));
+        }
+
+        // Load cart count on page load
+        document.addEventListener('DOMContentLoaded', updateCartBadge);
     </script>
 
     @stack('scripts')

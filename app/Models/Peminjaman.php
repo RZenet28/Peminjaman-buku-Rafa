@@ -13,6 +13,7 @@ class Peminjaman extends Model
     protected $table = 'peminjaman';
     
     protected $fillable = [
+        'pengajuan_id',
         'user_id',
         'buku_id',
         'tanggal_pinjam',
@@ -51,6 +52,14 @@ class Peminjaman extends Model
     public function buku()
     {
         return $this->belongsTo(Book::class, 'buku_id');
+    }
+
+    /**
+     * Relasi ke pengajuan (request group)
+     */
+    public function pengajuan()
+    {
+        return $this->belongsTo(Pengajuan::class);
     }
     
     /**

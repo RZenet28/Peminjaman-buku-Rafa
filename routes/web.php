@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -135,6 +136,15 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->group(function
     // Profile Khusus Siswa
     Route::get('/profile-siswa', [ProfileSiswaController::class, 'index'])->name('peminjam.profile.siswa');
     Route::put('/profile-siswa', [ProfileSiswaController::class, 'update'])->name('peminjam.profile.siswa.update');
+
+    // Shopping Cart Routes
+    Route::get('/cart', [CartController::class, 'index'])->name('peminjam.cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('peminjam.cart.add');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('peminjam.cart.remove');
+    Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('peminjam.cart.update-quantity');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('peminjam.cart.clear');
+    Route::get('/cart/mini', [CartController::class, 'getMini'])->name('peminjam.cart.mini');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('peminjam.cart.checkout');
 });
 
 require __DIR__.'/auth.php';

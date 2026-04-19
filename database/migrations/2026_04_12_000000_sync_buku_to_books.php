@@ -13,6 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Only sync if the old buku table exists
+        if (!Schema::hasTable('buku')) {
+            return;
+        }
+
         // Get all data from buku table
         $bukus = DB::table('buku')->get();
 

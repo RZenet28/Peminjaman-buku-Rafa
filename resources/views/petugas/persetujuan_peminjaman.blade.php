@@ -43,13 +43,13 @@
             color: #0c5460;
         }
 
-        /* Loan Card Styling */
-        .loan-cards {
+        /* Request Card Styling */
+        .request-cards {
             display: grid;
             gap: 20px;
         }
 
-        .loan-card {
+        .request-card {
             background: #ffffff;
             border-radius: 12px;
             padding: 20px;
@@ -58,15 +58,17 @@
             transition: all 0.3s ease;
         }
 
-        .loan-card:hover {
+        .request-card:hover {
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .loan-header {
+        .request-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eef0f6;
         }
 
         .borrower-info h3 {
@@ -82,17 +84,17 @@
             margin: 0;
         }
 
-        .loan-status {
+        .request-badge {
             display: inline-block;
             background-color: #fff3cd;
             color: #856404;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
 
-        .loan-details {
+        .request-meta {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
@@ -101,12 +103,12 @@
             border-bottom: 1px solid #eef0f6;
         }
 
-        .detail-item {
+        .meta-item {
             display: flex;
             flex-direction: column;
         }
 
-        .detail-label {
+        .meta-label {
             font-size: 12px;
             font-weight: 600;
             color: #4a5568;
@@ -114,23 +116,52 @@
             text-transform: uppercase;
         }
 
-        .detail-value {
+        .meta-value {
             font-size: 14px;
             color: #2d3436;
         }
 
-        .book-title {
-            font-weight: 600;
+        /* Books List */
+        .books-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eef0f6;
         }
 
-        .loan-dates {
-            display: flex;
-            gap: 20px;
+        .books-title {
             font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .books-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .book-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #6366f1;
+        }
+
+        .book-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2d3436;
+            margin-bottom: 3px;
+        }
+
+        .book-count {
+            font-size: 12px;
             color: #636e72;
         }
 
-        .loan-actions {
+        .request-actions {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
@@ -228,7 +259,7 @@
     <div class="petugas-wrapper">
         <div class="header-box">
             <h2>Persetujuan Peminjaman</h2>
-            <p>Kelola dan setujui permohonan peminjaman dari peminjam</p>
+            <p>Kelola dan setujui permohonan peminjaman dari peminjam (dikelompokkan per pengajuan)</p>
         </div>
 
         @if (session('success'))
@@ -237,55 +268,78 @@
             </div>
         @endif
 
-        @if ($loans->count() > 0)
-            <div class="loan-cards">
-                @foreach ($loans as $loan)
-                    <div class="loan-card">
-                        <div class="loan-header">
+        @if ($requests->count() > 0)
+            <div class="request-cards">
+                @foreach ($requests as $request)
+                    <div class="request-card">
+                        <div class="request-header">
                             <div class="borrower-info">
-                                <h3>{{ $loan->user->name }}</h3>
-                                <p>{{ $loan->user->email }}</p>
+                                <h3>{{ $request->user->name }}</h3>
+                                <p>{{ $request->user->email }}</p>
                             </div>
-                            <span class="loan-status">⏳ Menunggu Persetujuan</span>
+                            <span class="request-badge">⏳ Menunggu Persetujuan</span>
                         </div>
 
-                        <div class="loan-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Judul Buku</span>
-                                <span class="detail-value book-title">{{ $loan->buku->nama_buku ?? 'N/A' }}</span>
+                        <div class="request-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Pengajuan ID</span>
+                                <span class="meta-value">#{{ $request->id }}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Pengajuan Tanggal</span>
-                                <span class="detail-value">{{ $loan->created_at->format('d M Y') }}</span>
+                            <div class="meta-item">
+                                <span class="meta-label">Tanggal Pengajuan</span>
+                                <span class="meta-value">{{ $request->created_at->format('d M Y H:i') }}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Tanggal Mulai Pinjam</span>
-                                <span class="detail-value">{{ $loan->tanggal_pinjam->format('d M Y') }}</span>
+                            <div class="meta-item">
+                                <span class="meta-label">Tanggal Mulai Pinjam</span>
+                                <span class="meta-value">{{ $request->tanggal_pinjam->format('d M Y') }}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Tanggal Kembali</span>
-                                <span class="detail-value">{{ $loan->tanggal_kembali->format('d M Y') }}</span>
+                            <div class="meta-item">
+                                <span class="meta-label">Tanggal Kembali</span>
+                                <span class="meta-value">{{ $request->tanggal_kembali->format('d M Y') }}</span>
                             </div>
                         </div>
 
-                        <div class="loan-actions">
-                            <form action="{{ route('petugas.approve', $loan->id) }}" method="POST" style="display: inline;">
+                        <!-- Books in this request -->
+                        <div class="books-section">
+                            <div class="books-title">📚 Buku yang Diminta ({{ $request->peminjamans->count() }} item)</div>
+                            <div class="books-list">
+                                @php
+                                    $bookGrouped = $request->peminjamans->groupBy('buku_id');
+                                @endphp
+                                @foreach ($bookGrouped as $bookId => $pinjamans)
+                                    @php
+                                        $bookName = $pinjamans->first()->buku->nama_buku ?? 'N/A';
+                                        $quantity = $pinjamans->count();
+                                    @endphp
+                                    <div class="book-item">
+                                        <div class="book-name">{{ $bookName }}</div>
+                                        <div class="book-count">× {{ $quantity }} {{ $quantity > 1 ? 'salinan' : 'salinan' }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="request-actions">
+                            <form action="{{ route('petugas.approve', $request->id) }}" method="POST" style="display: inline;">
                                 @csrf
-                                <button type="submit" class="btn-approve">✓ Setujui</button>
+                                <button type="submit" class="btn-approve"
+                                    onclick="return confirm('Setujui permohonan peminjaman ini? Stock buku akan berkurang.')">✓
+                                    Setujui Semua</button>
                             </form>
-                            <form action="{{ route('petugas.reject', $loan->id) }}" method="POST" style="display: inline;">
+                            <form action="{{ route('petugas.reject', $request->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn-reject"
-                                    onclick="return confirm('Apakah Anda yakin ingin menolak peminjaman ini?')">✗ Tolak</button>
+                                    onclick="return confirm('Apakah Anda yakin ingin menolak permohonan ini?')">✗ Tolak
+                                    Semua</button>
                             </form>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            @if ($loans->hasPages())
+            @if ($requests->hasPages())
                 <div class="pagination">
-                    {{ $loans->links() }}
+                    {{ $requests->links() }}
                 </div>
             @endif
         @else

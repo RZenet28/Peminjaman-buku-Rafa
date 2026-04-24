@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <h6 class="text-muted small mb-2">Total Denda</h6>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Top Books & Users -->
         <div class="row g-4 mb-4">

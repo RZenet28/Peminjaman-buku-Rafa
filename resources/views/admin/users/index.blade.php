@@ -157,9 +157,9 @@
                                     </td>
                                     <td class="px-4 py-3 align-middle text-end">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Edit User">
+                                            {{-- <button type="button" class="btn btn-sm btn-outline-primary" title="Edit User">
                                                 <i class="bi bi-pencil"></i>
-                                            </button>
+                                            </button> --}}
                                             <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
                                                 class="d-inline" data-confirm="Yakin ingin menghapus user {{ $user->name }}?">
                                                 @csrf

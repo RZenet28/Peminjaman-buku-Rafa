@@ -115,7 +115,7 @@
                                 </p>
                             @endif
 
-                            <!-- Denda Info -->
+                            {{-- <!-- Denda Info -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center small mb-1">
                                     <span class="text-muted">
@@ -131,7 +131,7 @@
                                     <strong class="text-warning">Rp
                                         {{ number_format($book->denda_rusak, 0, ',', '.') }}</strong>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2">
@@ -234,7 +234,7 @@
                                                 required>
                                         </div>
 
-                                        <div class="col-md-4 mb-3">
+                                        {{-- <div class="col-md-4 mb-3">
                                             <label class="form-label fw-semibold">
                                                 <i class="bi bi-exclamation-circle me-2 text-danger"></i>Denda Hilang
                                             </label>
@@ -248,7 +248,7 @@
                                             </label>
                                             <input type="number" name="denda_rusak" class="form-control"
                                                 value="{{ $book->denda_rusak }}" required>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-12 mb-3">
                                             <label class="form-label fw-semibold">
@@ -382,7 +382,7 @@
                                 <input type="number" name="stock" class="form-control" placeholder="0" required>
                             </div>
 
-                            <div class="col-md-4 mb-3">
+                            {{-- <div class="col-md-4 mb-3">
                                 <label class="form-label fw-semibold">
                                     <i class="bi bi-exclamation-circle me-2 text-danger"></i>Denda Hilang
                                 </label>
@@ -394,7 +394,7 @@
                                     <i class="bi bi-exclamation-triangle me-2 text-warning"></i>Denda Rusak
                                 </label>
                                 <input type="number" name="denda_rusak" class="form-control" placeholder="0" required>
-                            </div>
+                            </div> --}}
 
                             <div class="col-12 mb-3">
                                 <label class="form-label fw-semibold">

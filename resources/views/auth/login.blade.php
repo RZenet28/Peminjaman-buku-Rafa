@@ -1,5 +1,4 @@
 <x-guest-layout>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -143,18 +142,38 @@
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: #475569; }
 
-        .input-wrapper { position: relative; }
-        .input-wrapper i {
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        
+        /* Ikon Sisi Kiri (Gembok/Email) */
+        .input-wrapper .prefix-icon {
             position: absolute;
             left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
             color: #94a3b8;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Tombol Sisi Kanan (Mata) */
+        .btn-toggle-pwd {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            padding: 4px;
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        .btn-toggle-pwd:hover {
+            color: var(--primary);
         }
 
         .input-field {
             width: 100%;
-            padding: 14px 16px 14px 48px;
+            padding: 14px 44px 14px 48px; /* Padding kanan ditambah untuk tombol mata */
             border: 1px solid #e2e8f0;
             border-radius: 14px;
             background: #f8fafc;
@@ -223,7 +242,6 @@
 
     <div class="login-container">
         <div class="main-card">
-            <!-- Left Hero -->
             <div class="hero-side">
                 <div class="branding">
                     <div class="brand-icon">
@@ -254,7 +272,6 @@
                 </div>
             </div>
 
-            <!-- Right Form -->
             <div class="form-side">
                 <div class="form-wrapper">
                     <div class="welcome-text">
@@ -269,23 +286,29 @@
                         <div class="form-group">
                             <label>Alamat Email</label>
                             <div class="input-wrapper">
-                                <i>
+                                <span class="prefix-icon">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
-                                </i>
-                                <input type="email" name="email" class="input-field" placeholder="nama@sekolah.com" required autofocus>
+                                </span>
+                                <input type="email" name="email" class="input-field" value="{{ old('email') }}" placeholder="nama@sekolah.com" required autofocus>
                             </div>
-                            <x-input-error :messages="$errors->get('email')" />
+                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-wrapper">
-                                <i>
+                                <span class="prefix-icon">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                </i>
-                                <input type="password" name="password" class="input-field" placeholder="••••••••" required>
+                                </span>
+                                <input type="password" name="password" id="passwordField" class="input-field" placeholder="••••••••" required>
+                                
+                                <button type="button" id="toggleBtn" class="btn-toggle-pwd">
+                                    <svg id="eyeIcon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                    </svg>
+                                </button>
                             </div>
-                            <x-input-error :messages="$errors->get('password')" />
+                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
                         <div class="form-options">
@@ -310,4 +333,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordField = document.querySelector('#passwordField');
+            const toggleBtn = document.querySelector('#toggleBtn');
+            const eyeIcon = document.querySelector('#eyeIcon');
+
+            // SVG Path Mata Terbuka
+            const eyeOpen = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            `;
+            
+            // SVG Path Mata Tertutup (Coret)
+            const eyeClose = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+            `;
+
+            toggleBtn.addEventListener('click', function() {
+                // Switch Type
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Switch Icon
+                eyeIcon.innerHTML = (type === 'password') ? eyeClose : eyeOpen;
+            });
+        });
+    </script>
 </x-guest-layout>

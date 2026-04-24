@@ -137,4 +137,68 @@ class BorrowingController extends Controller
 
         return view('admin.borrowing.approval', compact('pendingBorrowings', 'stats', 'pendingCount'));
     }
+
+    /**
+     * Display return approval list (pending returns only)
+     */
+    public function returnApprovalList(Request $request)
+    {
+        $query = Peminjaman::with(['user', 'buku'])
+            ->where('status', 'menunggu_persetujuan_pengembalian');
+
+        // Search
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('user', function ($u) use ($request) {
+                    $u->where('name', 'like', '%' . $request->search . '%');
+                })->orWhereHas('buku', function ($b) use ($request) {
+                    $b->where('nama_buku', 'like', '%' . $request->search . '%');
+                });
+            });
+        }
+
+        $pendingReturns = $query->latest()->paginate(15)->withQueryString();
+
+        $stats = [
+            'menunggu_persetujuan_pengembalian' => Peminjaman::where('status', 'menunggu_persetujuan_pengembalian')->count(),
+            'dikembalikan' => Peminjaman::where('status', 'dikembalikan')->count(),
+        ];
+
+        $pendingCount = $stats['menunggu_persetujuan_pengembalian'];
+
+        return view('admin.borrowing.return_approval', compact('pendingReturns', 'stats', 'pendingCount'));
+    }
+
+    /**
+     * Approve book return
+     */
+    public function approveReturn($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        // Increment book stock
+        $peminjaman->buku->increment('stock');
+
+        // Update status to returned
+        $peminjaman->update(['status' => 'dikembalikan']);
+
+        return back()->with('success', 'Pengembalian buku berhasil disetujui!');
+    }
+
+    /**
+     * Reject book return
+     */
+    public function rejectReturn($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        // Update status back to borrowed
+        $peminjaman->update([
+            'status' => 'dipinjam',
+            'tanggal_pengembalian' => null,
+            'catatan' => null
+        ]);
+
+        return back()->with('success', 'Pengembalian buku ditolak. Status kembali ke dipinjam.');
+    }
 }

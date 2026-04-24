@@ -65,6 +65,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/borrowing/{id}/approve', [BorrowingController::class, 'approve'])->name('borrowing.approve');
     Route::patch('/borrowing/{id}/reject', [BorrowingController::class, 'reject'])->name('borrowing.reject');
     
+    // Return Approval Management
+    Route::get('/borrowing/return/approval', [BorrowingController::class, 'returnApprovalList'])->name('borrowing.return_approval');
+    Route::patch('/borrowing/{id}/approve-return', [BorrowingController::class, 'approveReturn'])->name('borrowing.approve_return');
+    Route::patch('/borrowing/{id}/reject-return', [BorrowingController::class, 'rejectReturn'])->name('borrowing.reject_return');
+    
     // Reporting
     Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting.index');
     Route::get('/reporting/export', [ReportingController::class, 'export'])->name('reporting.export');
@@ -72,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{id}', [HistoryController::class, 'show'])->name('history.show');
+    Route::patch('/history/{id}/return-date', [HistoryController::class, 'updateReturnDate'])->name('history.updateReturnDate');
     
     // Settings
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
@@ -80,7 +86,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // =====================
-// ROLE: PETUGAS
+// =====================
+// ROLE: PETUGAS - DISABLED (Only Admin & Peminjam)
 // =====================
 // Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
 //     Route::get('/dashboard', [PetugasController::class, 'dashboard'])->name('dashboard');

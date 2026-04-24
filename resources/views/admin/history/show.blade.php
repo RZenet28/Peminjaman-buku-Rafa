@@ -60,10 +60,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="small text-muted">Keterlambatan</label>
-                                    @if($borrowing->tanggal_pengembalian > $borrowing->tanggal_kembali)
+                                    @php
+                                        // Calculate days late properly using timestamp
+                                        $actualTime = $borrowing->tanggal_pengembalian->timestamp;
+                                        $expectedTime = $borrowing->tanggal_kembali->timestamp;
+
+                                        $daysLate = 0;
+                                        if ($actualTime > $expectedTime) {
+                                            $secondsDiff = $actualTime - $expectedTime;
+                                            $daysLate = (int) ceil($secondsDiff / (24 * 60 * 60));
+                                        }
+                                    @endphp
+                                    @if($daysLate > 0)
                                         <p class="fw-bold text-warning">
                                             <i class="bi bi-exclamation-circle me-1"></i>
-                                            {{ $borrowing->tanggal_pengembalian->diffInDays($borrowing->tanggal_kembali) }} hari
+                                            {{ $daysLate }} hari
                                         </p>
                                     @else
                                         <p class="fw-bold text-success">
@@ -73,13 +84,24 @@
                                     @endif
                                 </div>
                             </div>
-                        @endif
 
-                        @if($borrowing->denda)
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="small text-muted">Denda</label>
-                                    <p class="fw-bold text-danger">Rp {{ number_format($borrowing->denda) }}</p>
+                                    @php
+                                        $denda = abs($borrowing->denda ?? 0); // Ensure positive
+                                        $isDenda = $denda > 0;
+                                    @endphp
+                                    <p class="fw-bold {{ $isDenda ? 'text-danger' : 'text-success' }}">
+                                        Rp {{ number_format($denda) }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-muted">&nbsp;</label>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editReturnDateModal">
+                                        <i class="bi bi-pencil me-1"></i>Ubah
+                                    </button>
                                 </div>
                             </div>
                         @endif
@@ -138,4 +160,110 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Edit Tanggal Pengembalian -->
+    <div class="modal fade" id="editReturnDateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ubah Tanggal Pengembalian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editReturnDateForm">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="tanggal_pengembalian" class="form-label">Tanggal Pengembalian (Aktual)</label>
+                            <input type="date" class="form-control" id="tanggal_pengembalian" name="tanggal_pengembalian"
+                                value="{{ $borrowing->tanggal_pengembalian?->format('Y-m-d') }}" required>
+                            <small class="text-muted d-block mt-2">
+                                Tanggal Kembali (Seharusnya):
+                                <strong>{{ $borrowing->tanggal_kembali?->format('d M Y') ?? '-' }}</strong>
+                            </small>
+                        </div>
+                        <div class="alert alert-info" role="alert">
+                            <small>
+                                <strong>Info Denda:</strong> Akan dihitung otomatis berdasarkan pengaturan denda per hari.
+                                <div class="mt-2" id="denda-preview"></div>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store fine per day in a JavaScript variable
+        const finePerDay = {{ $finePerDay }};
+        const expectedReturnDate = new Date('{{ $borrowing->tanggal_kembali->format('Y-m-d') }}T00:00:00').getTime();
+
+        document.getElementById('editReturnDateForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const tanggalPengembalian = document.getElementById('tanggal_pengembalian').value;
+            const borrowingId = {{ $borrowing->id }};
+
+            try {
+                const response = await fetch(`/admin/history/${borrowingId}/return-date`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    },
+                    body: JSON.stringify({
+                        tanggal_pengembalian: tanggalPengembalian
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success message with updated fine info
+                    alert(`Tanggal pengembalian berhasil diperbarui!\n\nTanggal: ${data.data.tanggal_pengembalian}\nHari Terlambat: ${data.data.daysLate} hari\nDenda: ${data.data.fineFormatted}`);
+
+                    // Reload the page to see updated data
+                    window.location.reload();
+                } else {
+                    alert('Gagal mengubah tanggal pengembalian');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan: ' + error.message);
+            }
+        });
+
+        // Update preview when date changes
+        document.getElementById('tanggal_pengembalian').addEventListener('change', function () {
+            const selectedDate = new Date(this.value + 'T00:00:00').getTime();
+
+            // Calculate difference in milliseconds, then convert to days
+            let daysLate = 0;
+            if (selectedDate > expectedReturnDate) {
+                const millisDiff = selectedDate - expectedReturnDate;
+                daysLate = Math.ceil(millisDiff / (1000 * 60 * 60 * 24));
+            }
+
+            const totalFine = Math.max(0, daysLate * finePerDay);
+
+            const preview = document.getElementById('denda-preview');
+            if (daysLate > 0) {
+                preview.innerHTML = `<span class="badge bg-warning">${daysLate} hari terlambat = Rp ${totalFine.toLocaleString('id-ID')}</span>`;
+            } else {
+                preview.innerHTML = `<span class="badge bg-success">Tepat waktu, tidak ada denda</span>`;
+            }
+        });
+
+        // Trigger preview on modal open
+        document.getElementById('editReturnDateModal').addEventListener('show.bs.modal', function () {
+            document.getElementById('tanggal_pengembalian').dispatchEvent(new Event('change'));
+        });
+    </script>
 @endsection

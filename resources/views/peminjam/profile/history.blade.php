@@ -147,7 +147,7 @@
                             </span>
                         </div>
 
-                        <div class="info-group mb-4">
+                        {{-- <div class="info-group mb-4">
                             <label class="text-uppercase x-small fw-bold text-muted mb-2 d-block"
                                 style="font-size: 0.7rem;">Informasi Dasar</label>
                             <div class="d-flex justify-content-between mb-2">
@@ -162,7 +162,7 @@
                                 <span class="text-muted">Telepon</span>
                                 <span class="fw-medium">{{ $user->no_telpon ?? '—' }}</span>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="stats-grid row g-2 mb-4">
                             <div class="col-6">
@@ -185,7 +185,7 @@
                             <h4 class="fw-bold mb-0 text-warning">Rp {{ number_format($totalFines, 0, ',', '.') }}</h4>
                         </div>
 
-                        <div class="d-grid gap-2">
+                        {{-- <div class="d-grid gap-2">
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
                                 <i class="bi bi-pencil-square me-2"></i>Edit Profil
                             </button>
@@ -193,7 +193,7 @@
                                 data-bs-target="#changePasswordModal">
                                 <i class="bi bi-shield-lock me-2"></i>Keamanan
                             </button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

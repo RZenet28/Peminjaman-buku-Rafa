@@ -159,20 +159,15 @@ class PeminjamController extends Controller
             $denda = $daysLate * 5000; // 5000 per day
         }
 
-        // Restore stock when book is returned
-        $book = $loan->buku;
-        if ($book) {
-            $book->increment('stock');
-        }
-
-        // Update loan record
+        // Update loan record to pending return approval
+        // Stock will be restored when admin approves the return
         $loan->update([
             'tanggal_pengembalian' => $validated['tanggal_pengembalian'],
-            'status' => 'dikembalikan',
+            'status' => 'menunggu_persetujuan_pengembalian',
             'denda' => $denda,
             'catatan' => $validated['catatan'] ?? null,
         ]);
 
-        return redirect()->route('peminjam.dashboard')->with('success', 'Buku berhasil dikembalikan!' . ($denda > 0 ? " Denda: Rp " . number_format($denda) : ''));
+        return redirect()->route('peminjam.dashboard')->with('success', 'Permohonan pengembalian buku telah dikirim. Menunggu persetujuan admin!' . ($denda > 0 ? " Denda: Rp " . number_format($denda) : ''));
     }
 }

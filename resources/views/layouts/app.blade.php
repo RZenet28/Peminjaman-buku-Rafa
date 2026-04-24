@@ -365,6 +365,13 @@
                 </a>
             </li>
 
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.borrowing.return_approval') }}" class="sidebar-menu-link">
+                    <i class="bi bi-check2-all sidebar-menu-icon"></i>
+                    Menyetujui Pengembalian
+                </a>
+            </li>
+
             {{-- <li class="sidebar-menu-item">
                 <a href="{{ route('admin.borrowing.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-journal-text sidebar-menu-icon"></i>
@@ -388,14 +395,14 @@
                 </a>
             </li>
 
-            <li class="sidebar-section">Pengaturan</li>
+            {{-- <li class="sidebar-section">Pengaturan</li>
 
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.settings.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-gear sidebar-menu-icon"></i>
                     Pengaturan Sistem
                 </a>
-            </li>
+            </li> --}}
         </ul>
 
         <!-- Sidebar Footer -->

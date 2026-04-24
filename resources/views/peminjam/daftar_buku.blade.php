@@ -263,6 +263,7 @@
                         placeholder="Cari judul buku atau kategori..."></div>
             </div>
         </div>
+        
         <div class="row g-4">
             @forelse($books as $buku)
                 <div class="col-xl-3 col-lg-4 col-md-6">
